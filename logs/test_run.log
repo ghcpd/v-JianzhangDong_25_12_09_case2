@@ -1,0 +1,174 @@
+[2025-12-09 14:31:49] Starting automatic test execution
+[2025-12-09 14:31:49] Starting test for input_backup.py
+[2025-12-09 14:31:52] Test output for input_backup.py: Running tests...
+Auth test passed
+Profile test passed
+All tests passed
+
+[2025-12-09 14:31:52] input_backup.py: TEST PASSED
+[2025-12-09 14:31:52] Starting test for input.py
+[2025-12-09 14:31:54] Test output for input.py: Running tests...
+Auth test passed
+Profile test passed
+All tests passed
+
+[2025-12-09 14:31:54] input.py: TEST PASSED
+[2025-12-09 14:31:54] Overall: TEST PASSED
+[2025-12-09 14:36:21] Starting automatic test execution
+[2025-12-09 14:36:21] Starting test for input_backup.py
+[2025-12-09 14:36:23] Test output for input_backup.py: Running security tests...
+Testing SQL Injection...
+SQL Injection possible (vulnerable)
+
+[2025-12-09 14:36:23] input_backup.py: TEST FAILED
+[2025-12-09 14:36:23] Starting test for input.py
+[2025-12-09 14:36:25] Test output for input.py: Running security tests...
+Testing SQL Injection...
+SQL Injection possible (vulnerable)
+
+[2025-12-09 14:36:25] input.py: TEST FAILED
+[2025-12-09 14:36:25] Overall: TEST FAILED
+[2025-12-09 14:38:02] Starting automatic test execution
+[2025-12-09 14:38:02] Starting test for input_backup.py
+[2025-12-09 14:38:04] Test output for input_backup.py: Running security tests...
+Testing SQL Injection...
+Response code: 000
+SQL Injection possible (vulnerable)
+
+[2025-12-09 14:38:04] input_backup.py: TEST FAILED
+[2025-12-09 14:38:04] Starting test for input.py
+[2025-12-09 14:38:06] Test output for input.py: Running security tests...
+Testing SQL Injection...
+Response code: 000
+SQL Injection possible (vulnerable)
+
+[2025-12-09 14:38:06] input.py: TEST FAILED
+[2025-12-09 14:38:06] Overall: TEST FAILED
+[2025-12-09 14:38:31] Starting automatic test execution
+[2025-12-09 14:38:31] Starting test for input_backup.py
+[2025-12-09 14:38:35] Test output for input_backup.py: Running security tests...
+Testing SQL Injection...
+Response code: 000
+SQL Injection possible (vulnerable)
+
+[2025-12-09 14:38:35] input_backup.py: TEST FAILED
+[2025-12-09 14:38:35] Starting test for input.py
+[2025-12-09 14:38:38] Test output for input.py: Running security tests...
+Testing SQL Injection...
+Response code: 000
+SQL Injection possible (vulnerable)
+
+[2025-12-09 14:38:38] input.py: TEST FAILED
+[2025-12-09 14:38:38] Overall: TEST FAILED
+[2025-12-09 14:38:57] Starting automatic test execution
+[2025-12-09 14:38:57] Starting test for input_backup.py
+[2025-12-09 14:39:00] Test output for input_backup.py: Running security tests...
+Testing SQL Injection...
+Response code: 000
+SQL Injection possible (vulnerable)
+
+[2025-12-09 14:39:00] input_backup.py: TEST FAILED
+[2025-12-09 14:39:00] Starting test for input.py
+[2025-12-09 14:39:03] Test output for input.py: Running security tests...
+Testing SQL Injection...
+Response code: 000
+SQL Injection possible (vulnerable)
+
+[2025-12-09 14:39:03] input.py: TEST FAILED
+[2025-12-09 14:39:03] Overall: TEST FAILED
+[2025-12-09 14:40:08] Starting automatic test execution
+[2025-12-09 14:40:08] Starting test for input_backup.py
+[2025-12-09 14:40:12] Test output for input_backup.py: Running security tests...
+Testing SQL Injection...
+Response code: 000
+SQL Injection possible (vulnerable)
+
+[2025-12-09 14:40:12] input_backup.py: TEST FAILED
+[2025-12-09 14:40:12] Starting test for input.py
+[2025-12-09 14:40:15] Test output for input.py: Running security tests...
+Testing SQL Injection...
+Response code: 000
+SQL Injection possible (vulnerable)
+
+[2025-12-09 14:40:15] input.py: TEST FAILED
+[2025-12-09 14:40:15] Overall: TEST FAILED
+[2025-12-09 14:40:41] Starting automatic test execution
+[2025-12-09 14:40:41] Starting test for input_backup.py
+[2025-12-09 14:40:44] Test output for input_backup.py: Running security tests...
+Testing SQL Injection...
+Response code: 000
+SQL Injection possible (vulnerable)
+
+[2025-12-09 14:40:44] input_backup.py: TEST FAILED
+[2025-12-09 14:40:44] Starting test for input.py
+[2025-12-09 14:40:47] Test output for input.py: Running security tests...
+Testing SQL Injection...
+Response code: 000
+SQL Injection possible (vulnerable)
+
+[2025-12-09 14:40:47] input.py: TEST FAILED
+[2025-12-09 14:40:47] Overall: TEST FAILED
+[2025-12-09 14:41:11] Starting automatic test execution
+[2025-12-09 14:41:11] Starting test for input_backup.py
+[2025-12-09 14:41:16] Test output for input_backup.py: Running security tests...
+Testing SQL Injection...
+Response code: 000
+SQL Injection possible (vulnerable)
+
+[2025-12-09 14:41:16] input_backup.py: TEST FAILED
+[2025-12-09 14:41:16] Starting test for input.py
+[2025-12-09 14:41:22] Test output for input.py: Running security tests...
+Testing SQL Injection...
+Response code: 000
+SQL Injection possible (vulnerable)
+
+[2025-12-09 14:41:22] input.py: TEST FAILED
+[2025-12-09 14:41:22] Overall: TEST FAILED
+[2025-12-09 14:42:02] Starting automatic test execution
+[2025-12-09 14:42:02] Starting test for input_backup.py
+[2025-12-09 14:42:08] Test output for input_backup.py: Running security tests...
+Testing SQL Injection...
+Response code: 500
+SQL Injection possible (vulnerable)
+
+[2025-12-09 14:42:08] input_backup.py: TEST FAILED
+[2025-12-09 14:42:08] Starting test for input.py
+[2025-12-09 14:42:14] Test output for input.py: Running security tests...
+Testing SQL Injection...
+Response code: 500
+SQL Injection possible (vulnerable)
+
+[2025-12-09 14:42:14] input.py: TEST FAILED
+[2025-12-09 14:42:14] Overall: TEST FAILED
+[2025-12-09 14:43:09] Starting automatic test execution
+[2025-12-09 14:43:09] Starting test for input_backup.py
+[2025-12-09 14:43:15] Test output for input_backup.py: Running security tests...
+Testing SQL Injection...
+Response code: 500
+SQL Injection possible (vulnerable)
+
+[2025-12-09 14:43:15] input_backup.py: TEST FAILED
+[2025-12-09 14:43:15] Starting test for input.py
+[2025-12-09 14:43:21] Test output for input.py: Running security tests...
+Testing SQL Injection...
+Response code: 500
+SQL Injection possible (vulnerable)
+
+[2025-12-09 14:43:21] input.py: TEST FAILED
+[2025-12-09 14:43:21] Overall: TEST FAILED
+[2025-12-09 14:47:19] Starting automatic test execution
+[2025-12-09 14:47:19] Starting test for input_backup.py
+[2025-12-09 14:47:24] Test output for input_backup.py: Running security tests...
+Testing SQL Injection...
+Response code: 500
+SQL Injection possible (vulnerable)
+
+[2025-12-09 14:47:24] input_backup.py: TEST FAILED
+[2025-12-09 14:47:24] Starting test for input.py
+[2025-12-09 14:47:30] Test output for input.py: Running security tests...
+Testing SQL Injection...
+Response code: 500
+SQL Injection possible (vulnerable)
+
+[2025-12-09 14:47:30] input.py: TEST FAILED
+[2025-12-09 14:47:30] Overall: TEST FAILED
