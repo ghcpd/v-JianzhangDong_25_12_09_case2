@@ -1,0 +1,11 @@
+
+[2025-12-09T07:35:48.462890] Starting automated tests
+[2025-12-09T07:35:48.538523] Running tests for target: backup
+[2025-12-09T07:35:49.797719] ....                                                                     [100%]
+[2025-12-09T07:35:49.798866] 4 passed in 0.42s
+[2025-12-09T07:35:49.884409] backup TEST PASSED
+[2025-12-09T07:35:49.884871] Running tests for target: fixed
+[2025-12-09T07:35:51.111954] ....                                                                     [100%]
+[2025-12-09T07:35:51.112974] 4 passed in 0.44s
+[2025-12-09T07:35:51.199737] fixed TEST PASSED
+[2025-12-09T07:35:51.200268] TEST PASSED
