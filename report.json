@@ -1,0 +1,101 @@
+{
+  "summary": {
+    "total_vulnerabilities": 8,
+    "critical": 3,
+    "high": 3,
+    "medium": 2,
+    "low": 0
+  },
+  "details": [
+    {
+      "id": 1,
+      "file": "inputs.py",
+      "line_numbers": [20],
+      "vulnerability_type": "SQL Injection",
+      "severity": "Critical",
+      "description": "The query_profile() function uses string formatting to construct SQL queries, allowing attackers to inject arbitrary SQL code. The vulnerable code: 'q = \"SELECT id,name,balance FROM profiles WHERE id = '%s'\" % uid' allows direct SQL injection attacks.",
+      "fix_explanation": "Replaced string formatting with parameterized queries using the '?' placeholder and passing uid as a separate parameter to cursor.execute(). This prevents SQL injection by ensuring user input is properly escaped. Changed from 'c.execute(q, (uid_str,))' format.",
+      "secure_code_snippet": "q = \"SELECT id, name, balance FROM profiles WHERE id = ?\"\nc.execute(q, (uid_str,))"
+    },
+    {
+      "id": 2,
+      "file": "inputs.py",
+      "line_numbers": [11, 12, 13],
+      "vulnerability_type": "Hardcoded Secrets",
+      "severity": "Critical",
+      "description": "API keys and authentication tokens are hardcoded as string literals (PAYMENT_TOKEN, MAIL_SERVER_KEY, INTERNAL_AUTH). These sensitive credentials should never be stored in source code as they can be exposed through version control, logs, or accidental commits.",
+      "fix_explanation": "Replaced hardcoded secrets with environment variable loading using os.getenv(). This allows secrets to be provided at runtime without being stored in the codebase. Default values are provided only for development purposes.",
+      "secure_code_snippet": "PAYMENT_TOKEN = os.getenv(\"PAYMENT_TOKEN\", \"default_token\")\nMAIL_SERVER_KEY = os.getenv(\"MAIL_SERVER_KEY\", \"default_key\")\nINTERNAL_AUTH = os.getenv(\"INTERNAL_AUTH\", \"default_auth\")"
+    },
+    {
+      "id": 3,
+      "file": "inputs.py",
+      "line_numbers": [40],
+      "vulnerability_type": "Command Injection",
+      "severity": "Critical",
+      "description": "The export_data() function uses subprocess.Popen() with shell=True and user-controlled input in the command string. This allows command injection attacks. The vulnerable code: 'cmd = f\"zip {name}.zip {DB_FILE}\"' allows arbitrary command execution.",
+      "fix_explanation": "Replaced shell command execution with subprocess.run() using a list of command arguments instead of a shell string. This prevents shell interpretation of special characters. Added filename validation to only allow alphanumeric, underscore, and hyphen characters. Changed from Popen with shell=True to run() with list arguments.",
+      "secure_code_snippet": "cmd = [\"zip\", f\"{name}.zip\", DB_FILE]\nresult = subprocess.run(cmd, capture_output=True, timeout=30, check=False)"
+    },
+    {
+      "id": 4,
+      "file": "inputs.py",
+      "line_numbers": [17, 18],
+      "vulnerability_type": "Weak Cryptographic Hash",
+      "severity": "High",
+      "description": "The auth_user() function uses MD5 for authentication hashing. MD5 is cryptographically broken and should not be used for security purposes. It's vulnerable to collision attacks and can be easily cracked.",
+      "fix_explanation": "Replaced MD5 with HMAC-SHA256 for authentication. HMAC-SHA256 provides better security properties and is suitable for message authentication. Combined username and password with the internal auth key using HMAC to create a more secure authentication token.",
+      "secure_code_snippet": "import hmac\nimport hashlib\nmsg = f\"{username}:{INTERNAL_AUTH}\".encode()\nhashed = hmac.new(msg, password.encode(), hashlib.sha256).hexdigest()"
+    },
+    {
+      "id": 5,
+      "file": "inputs.py",
+      "line_numbers": [32, 33, 34],
+      "vulnerability_type": "Missing Input Validation",
+      "severity": "High",
+      "description": "The transfer_funds() function does not validate target, amount, or notify_url parameters. This allows malformed data to be processed, potentially causing application crashes, SSRF attacks, or other vulnerabilities.",
+      "fix_explanation": "Added comprehensive input validation: type checking, length limits, format validation, and numeric range validation. Validates target (max 255 chars), amount (0-1000000), and URL (max 2048 chars). Returns None on validation failure with appropriate error logging.",
+      "secure_code_snippet": "if not target or len(target) > 255:\n    logger.warning(\"Invalid transfer target\")\n    return None\ntry:\n    amount = float(amount)\n    if amount <= 0 or amount > 1000000:\n        return None\nexcept (ValueError, TypeError):\n    return None"
+    },
+    {
+      "id": 6,
+      "file": "inputs.py",
+      "line_numbers": [36, 37],
+      "vulnerability_type": "Path Traversal",
+      "severity": "High",
+      "description": "The update_records() function opens files from user-supplied paths without validation. This allows path traversal attacks (e.g., '../../../etc/passwd') to read arbitrary files from the system.",
+      "fix_explanation": "Added path validation using pathlib.Path.resolve() to prevent path traversal. The file must exist, must be readable, and must be within the 'config' directory. Paths are converted to absolute paths and checked against the allowed directory boundary.",
+      "secure_code_snippet": "allowed_dir = Path(\"config\").resolve()\nconfig_path = Path(path).resolve()\nif not str(config_path).startswith(str(allowed_dir)):\n    logger.warning(f\"Path traversal attempt blocked: {path}\")\n    return None"
+    },
+    {
+      "id": 7,
+      "file": "inputs.py",
+      "line_numbers": [25, 26, 32, 33],
+      "vulnerability_type": "Insecure Direct Object References (IDOR)",
+      "severity": "Medium",
+      "description": "API endpoints do not implement authorization checks. Any authenticated user can access any profile (via /profile endpoint) without verifying ownership. No access control is enforced.",
+      "fix_explanation": "Added input validation and error handling to all API endpoints. Endpoints now return error responses instead of None/empty values. Recommend adding session-based authorization middleware to verify user ownership before allowing data access. This requires implementing proper authentication and session management.",
+      "secure_code_snippet": "# Add authorization check (pseudocode):\nif not verify_user_ownership(uid, current_user_id):\n    return jsonify({\"error\": \"Unauthorized\"}), 403"
+    },
+    {
+      "id": 8,
+      "file": "inputs.py",
+      "line_numbers": [31, 32],
+      "vulnerability_type": "Log Injection / Information Disclosure",
+      "severity": "Medium",
+      "description": "The transfer_funds() function logs user-controlled data directly: 'log = f\"transfer:{target}:{amount}\"' then prints it. This allows log injection attacks and exposes transaction details in plain text logs.",
+      "fix_explanation": "Replaced print() with proper logging module and structured logging. Removed sensitive data (target) from logs and only log necessary information. Uses logger.info() instead of print() to integrate with logging framework. Added logger.warning() for error conditions.",
+      "secure_code_snippet": "import logging\nlogger = logging.getLogger(__name__)\nlogger.info(f\"Transfer initiated: amount={amount}\")"
+    },
+    {
+      "id": 9,
+      "file": "inputs.py",
+      "line_numbers": [82],
+      "vulnerability_type": "Debug Mode Enabled in Production",
+      "severity": "Medium",
+      "description": "Flask debug mode is enabled by default with app.run(debug=True). This exposes detailed error information, allows code execution through the debugger, and poses significant security risks in production environments.",
+      "fix_explanation": "Replaced hardcoded debug=True with environment-based configuration. Debug mode is only enabled when FLASK_ENV=development. Also added explicit host binding to 127.0.0.1 to prevent external access. This prevents accidental exposure of debugging information in production.",
+      "secure_code_snippet": "debug_mode = os.getenv(\"FLASK_ENV\", \"production\") == \"development\"\napp.run(debug=debug_mode, host=\"127.0.0.1\", port=5000)"
+    }
+  ]
+}
