@@ -1,0 +1,101 @@
+{
+  "summary": {
+    "total_vulnerabilities": 9,
+    "critical": 2,
+    "high": 4,
+    "medium": 2,
+    "low": 1
+  },
+  "details": [
+    {
+      "id": 1,
+      "file": "input.py",
+      "line_numbers": [11,12,13],
+      "vulnerability_type": "Hardcoded secrets",
+      "severity": "High",
+      "description": "API keys and secrets are hardcoded in source (PAYMENT_TOKEN, MAIL_SERVER_KEY, INTERNAL_AUTH).",
+      "fix_explanation": "Move secrets to environment variables and fail closed if missing. Avoid storing secrets in code or repo.",
+      "secure_code_snippet": "PAYMENT_TOKEN = os.environ.get(\"PAYMENT_TOKEN\")\nMAIL_SERVER_KEY = os.environ.get(\"MAIL_SERVER_KEY\")\nINTERNAL_AUTH = os.environ.get(\"INTERNAL_AUTH\")"
+    },
+    {
+      "id": 2,
+      "file": "input.py",
+      "line_numbers": [20],
+      "vulnerability_type": "Weak hashing (MD5) for auth token generation",
+      "severity": "Medium",
+      "description": "MD5 is considered cryptographically broken for authentication/verification purposes.",
+      "fix_explanation": "Use HMAC-SHA256 with a server-side secret to derive authentication tokens.",
+      "secure_code_snippet": "token = hmac.new(INTERNAL_AUTH.encode(), username.encode(), hashlib.sha256).hexdigest()"
+    },
+    {
+      "id": 3,
+      "file": "input.py",
+      "line_numbers": [27],
+      "vulnerability_type": "SQL Injection",
+      "severity": "Critical",
+      "description": "Unsanitized user input is interpolated into SQL query string, allowing SQL injection.",
+      "fix_explanation": "Use parameterized queries and validate/convert types before querying the database.",
+      "secure_code_snippet": "c.execute(\"SELECT id,name,balance FROM profiles WHERE id = ?\", (uid_int,))"
+    },
+    {
+      "id": 4,
+      "file": "input.py",
+      "line_numbers": [39,40],
+      "vulnerability_type": "Server-Side Request Forgery (SSRF)",
+      "severity": "High",
+      "description": "The notify_url parameter is used directly for outgoing requests, allowing the server to make arbitrary HTTP requests.",
+      "fix_explanation": "Validate notify_url (require https, reject private IPs), enforce timeouts, and limit recipients to an allowlist where possible.",
+      "secure_code_snippet": "if not is_valid_url(url):\n    raise ValueError(\"Invalid notify_url\")\nresp = requests.post(url, json={\"token\": PAYMENT_TOKEN, \"amount\": amount_val}, timeout=5)"
+    },
+    {
+      "id": 5,
+      "file": "input.py",
+      "line_numbers": [44,45,46,76],
+      "vulnerability_type": "Arbitrary file read / Path traversal",
+      "severity": "High",
+      "description": "User-controlled path is opened directly, enabling reading of any file the process can access.",
+      "fix_explanation": "Restrict config reads to a safe directory and require specific filename patterns (.yaml). Validate and normalize paths before opening.",
+      "secure_code_snippet": "full = os.path.abspath(os.path.join(SAFE_CONFIG_DIR, filename))\nif not full.startswith(SAFE_CONFIG_DIR + os.sep):\n    raise ValueError(\"Access to the requested file is not allowed\")"
+    },
+    {
+      "id": 6,
+      "file": "input.py",
+      "line_numbers": [50,51,52,82],
+      "vulnerability_type": "Command injection / unsafe shell usage",
+      "severity": "Critical",
+      "description": "User-supplied input is interpolated into a shell command executed with shell=True, enabling arbitrary command execution.",
+      "fix_explanation": "Avoid shell=True and external commands; use safe libraries (zipfile) and validate filenames.",
+      "secure_code_snippet": "with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zf:\n    zf.write(DB_FILE, os.path.basename(DB_FILE))"
+    },
+    {
+      "id": 7,
+      "file": "input.py",
+      "line_numbers": [56,68,74,80],
+      "vulnerability_type": "Missing authentication/authorization on sensitive endpoints",
+      "severity": "High",
+      "description": "Endpoints that modify or export data (/transfer, /config, /export, /profile) have no auth checks and can be invoked by anyone.",
+      "fix_explanation": "Require an API key or proper auth for sensitive endpoints (example: X-API-KEY header checked against env var).",
+      "secure_code_snippet": "@app.route(\"/transfer\", methods=[\"POST\"])\n@require_api_key\ndef api_transfer():\n    ..."
+    },
+    {
+      "id": 8,
+      "file": "input.py",
+      "line_numbers": [88],
+      "vulnerability_type": "Debug mode enabled in production",
+      "severity": "Medium",
+      "description": "app.run(debug=True) will enable debugging and reveal stack traces and environment data.",
+      "fix_explanation": "Do not enable debug mode by default. Control via environment variable and default to False.",
+      "secure_code_snippet": "debug_mode = os.environ.get(\"FLASK_DEBUG\", \"0\") == \"1\"\napp.run(debug=debug_mode)"
+    },
+    {
+      "id": 9,
+      "file": "input.py",
+      "line_numbers": [37,38],
+      "vulnerability_type": "Logging of sensitive data",
+      "severity": "Low",
+      "description": "Printing request data (target and amount) directly may leak sensitive information in logs.",
+      "fix_explanation": "Use structured logging and avoid printing sensitive values; log only non-sensitive metadata.",
+      "secure_code_snippet": "logger.info(\"Initiating transfer to %s of amount %s\", target, amount_val)"
+    }
+  ]
+}
