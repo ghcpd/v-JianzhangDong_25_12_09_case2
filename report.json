@@ -1,0 +1,101 @@
+{
+  "summary": {
+    "total_vulnerabilities": 9,
+    "critical": 5,
+    "high": 3,
+    "medium": 1,
+    "low": 0
+  },
+  "details": [
+    {
+      "id": 1,
+      "file": "input_backup.py",
+      "line_numbers": [11,12,13],
+      "vulnerability_type": "Hardcoded secrets / credentials",
+      "severity": "Critical",
+      "description": "API keys and internal authentication values are stored in the source code, exposing secrets to any user with repository access.",
+      "fix_explanation": "Move secrets to environment variables and fail-safe if not provided. This reduces leakage risk via source control and logs.",
+      "secure_code_snippet": "PAYMENT_TOKEN = os.environ.get(\"PAYMENT_TOKEN\")\nINTERNAL_AUTH_KEY = os.environ.get(\"INTERNAL_AUTH_KEY\")\nADMIN_API_KEY = os.environ.get(\"ADMIN_API_KEY\")"
+    },
+    {
+      "id": 2,
+      "file": "input_backup.py",
+      "line_numbers": [19,20],
+      "vulnerability_type": "Weak hashing / predictable token generation",
+      "severity": "High",
+      "description": "MD5 is used to generate auth tokens. MD5 is broken and susceptible to collisions and brute force attacks.",
+      "fix_explanation": "Replace MD5 with HMAC-SHA256 using a server-side secret key for safe token generation.",
+      "secure_code_snippet": "token = hmac.new(INTERNAL_AUTH_KEY.encode(), username.encode(), hashlib.sha256).hexdigest()"
+    },
+    {
+      "id": 3,
+      "file": "input_backup.py",
+      "line_numbers": [27,28],
+      "vulnerability_type": "SQL Injection",
+      "severity": "Critical",
+      "description": "The SQL query uses string formatting with unsanitized user input, allowing arbitrary SQL execution and data exfiltration.",
+      "fix_explanation": "Use parameterized queries and validate input form (e.g., numeric-only user IDs).",
+      "secure_code_snippet": "c.execute(\"SELECT id,name,balance FROM profiles WHERE id = ?\", (uid,))"
+    },
+    {
+      "id": 4,
+      "file": "input_backup.py",
+      "line_numbers": [38,40],
+      "vulnerability_type": "SSRF / Sensitive token leakage",
+      "severity": "Critical",
+      "description": "Server issues outbound HTTP requests to a user-supplied URL and includes a secret payment token, enabling SSRF and token exfiltration.",
+      "fix_explanation": "Validate notify URLs against an allow-list, require HTTPS, and avoid sending sensitive secrets to untrusted endpoints. Use timeouts and exception handling.",
+      "secure_code_snippet": "if not is_allowed_notify_url(url): raise ValueError('Invalid notify_url')\nresp = requests.post(url, json={'amount': amount}, headers=headers, timeout=5)"
+    },
+    {
+      "id": 5,
+      "file": "input_backup.py",
+      "line_numbers": [44,45],
+      "vulnerability_type": "Arbitrary file read / path traversal",
+      "severity": "High",
+      "description": "The application opens arbitrary paths provided by users, allowing disclosure of sensitive files on disk.",
+      "fix_explanation": "Limit file access to a configured directory and sanitize file names. Reject absolute paths and path traversal sequences.",
+      "secure_code_snippet": "safe_path = os.path.normpath(os.path.join(CONFIG_DIR, os.path.basename(path)))\nif not safe_path.startswith(os.path.abspath(CONFIG_DIR)): raise ValueError('Invalid file path')"
+    },
+    {
+      "id": 6,
+      "file": "input_backup.py",
+      "line_numbers": [50,52],
+      "vulnerability_type": "Command injection / unsafe subprocess usage",
+      "severity": "Critical",
+      "description": "User-supplied data is passed to subprocess.Popen with shell=True. This allows command injection and arbitrary OS command execution.",
+      "fix_explanation": "Replace shell calls with Python's zipfile module and sanitize input; avoid shell=True.",
+      "secure_code_snippet": "with zipfile.ZipFile(buf, 'w') as zf: zf.write(DB_FILE, arcname=os.path.basename(DB_FILE))"
+    },
+    {
+      "id": 7,
+      "file": "input_backup.py",
+      "line_numbers": [56,80],
+      "vulnerability_type": "Missing authentication on sensitive endpoints",
+      "severity": "High",
+      "description": "The API exposes endpoints that manipulate or return sensitive data without authentication, enabling unauthenticated data access and operations.",
+      "fix_explanation": "Add token-based authorization checks (Authorization header) and require valid server-side API key for sensitive endpoints.",
+      "secure_code_snippet": "def require_api_key(fn): ...\n@app.route('/profile')\n@require_api_key\ndef api_profile(): ..."
+    },
+    {
+      "id": 8,
+      "file": "input_backup.py",
+      "line_numbers": [88],
+      "vulnerability_type": "Debug mode enabled in production",
+      "severity": "Critical",
+      "description": "Running Flask with debug=True can expose an interactive debugger and reveal secrets or allow code execution.",
+      "fix_explanation": "Do not enable debug mode in production; make it controlled by an environment variable and default to False.",
+      "secure_code_snippet": "debug_mode = os.environ.get('FLASK_DEBUG', '0') == '1'\napp.run(debug=debug_mode, host='0.0.0.0')"
+    },
+    {
+      "id": 9,
+      "file": "input_backup.py",
+      "line_numbers": [1,100],
+      "vulnerability_type": "Lack of input validation and error handling",
+      "severity": "Medium",
+      "description": "Multiple functions accept user input without validation and missing exception handling can lead to crashes or inconsistent behavior.",
+      "fix_explanation": "Validate inputs, use try/except blocks, and return safe error messages instead of stack traces.",
+      "secure_code_snippet": "try:\n  amount_value = float(amount)\nexcept Exception:\n  raise ValueError('Invalid amount')"
+    }
+  ]
+}
