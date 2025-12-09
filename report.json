@@ -1,0 +1,91 @@
+{
+  "summary": {
+    "total_vulnerabilities": 8,
+    "critical": 3,
+    "high": 3,
+    "medium": 1,
+    "low": 1
+  },
+  "details": [
+    {
+      "id": 1,
+      "file": "input.py",
+      "line_numbers": [10, 11, 12],
+      "vulnerability_type": "Hardcoded Credentials",
+      "severity": "Critical",
+      "description": "Sensitive API keys and authentication tokens are hardcoded in the source code, making them easily accessible to anyone with access to the code.",
+      "fix_explanation": "Replaced hardcoded values with environment variables to prevent exposure in version control and allow secure configuration.",
+      "secure_code_snippet": "PAYMENT_TOKEN = os.environ.get(\"PAYMENT_TOKEN\", \"\")\nMAIL_SERVER_KEY = os.environ.get(\"MAIL_SERVER_KEY\", \"\")\nINTERNAL_AUTH = os.environ.get(\"INTERNAL_AUTH\", \"\")"
+    },
+    {
+      "id": 2,
+      "file": "input.py",
+      "line_numbers": [18],
+      "vulnerability_type": "SQL Injection",
+      "severity": "Critical",
+      "description": "User input is directly concatenated into SQL query string, allowing potential injection attacks.",
+      "fix_explanation": "Used parameterized queries with placeholders to safely bind user input, preventing SQL injection.",
+      "secure_code_snippet": "c.execute(\"SELECT id,name,balance FROM profiles WHERE id = ?\", (uid,))"
+    },
+    {
+      "id": 3,
+      "file": "input.py",
+      "line_numbers": [35],
+      "vulnerability_type": "Command Injection",
+      "severity": "Critical",
+      "description": "User input is used in shell command execution, allowing arbitrary command execution.",
+      "fix_explanation": "Replaced shell=True with subprocess.run using a list of arguments and added input validation to sanitize the name parameter.",
+      "secure_code_snippet": "subprocess.run([\"zip\", f\"{name}.zip\", DB_FILE], check=True)"
+    },
+    {
+      "id": 4,
+      "file": "input.py",
+      "line_numbers": [16],
+      "vulnerability_type": "Weak Cryptographic Hash",
+      "severity": "High",
+      "description": "MD5 hash is used for authentication, which is cryptographically weak and susceptible to collisions.",
+      "fix_explanation": "Replaced MD5 with SHA-256 for stronger hashing security.",
+      "secure_code_snippet": "hashed = hashlib.sha256(raw.encode()).hexdigest()"
+    },
+    {
+      "id": 5,
+      "file": "input.py",
+      "line_numbers": [29],
+      "vulnerability_type": "Path Traversal",
+      "severity": "High",
+      "description": "User-provided file path is used without validation, allowing access to arbitrary files.",
+      "fix_explanation": "Added validation to ensure the path is safe, restricting to .yaml files and preventing directory traversal.",
+      "secure_code_snippet": "if not path or not isinstance(path, str) or \"..\" in path or not path.endswith(\".yaml\"):\n    raise ValueError(\"Invalid path\")"
+    },
+    {
+      "id": 6,
+      "file": "input.py",
+      "line_numbers": [25],
+      "vulnerability_type": "Server-Side Request Forgery (SSRF)",
+      "severity": "High",
+      "description": "User-provided URL is used in HTTP requests without validation, potentially allowing internal network access.",
+      "fix_explanation": "Added validation to ensure URLs start with https:// and are properly formatted.",
+      "secure_code_snippet": "if not notify_url or not isinstance(notify_url, str) or not notify_url.startswith(\"https://\"):\n    raise ValueError(\"Invalid notify_url\")"
+    },
+    {
+      "id": 7,
+      "file": "input.py",
+      "line_numbers": [14, 20, 23, 31, 37],
+      "vulnerability_type": "Lack of Input Validation",
+      "severity": "Medium",
+      "description": "User inputs are not validated, leading to potential type errors or unexpected behavior.",
+      "fix_explanation": "Added comprehensive input validation in all functions to check types, lengths, and formats.",
+      "secure_code_snippet": "if not username or not isinstance(username, str) or len(username) > 50:\n    raise ValueError(\"Invalid username\")"
+    },
+    {
+      "id": 8,
+      "file": "input.py",
+      "line_numbers": [58],
+      "vulnerability_type": "Debug Mode Enabled",
+      "severity": "Low",
+      "description": "Flask app runs in debug mode, which can expose sensitive information in production.",
+      "fix_explanation": "Removed debug=True to prevent information leakage in production environments.",
+      "secure_code_snippet": "app.run()"
+    }
+  ]
+}
