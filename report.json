@@ -1,0 +1,91 @@
+{
+  "summary": {
+    "total_vulnerabilities": 8,
+    "critical": 2,
+    "high": 4,
+    "medium": 1,
+    "low": 1
+  },
+  "details": [
+    {
+      "id": 1,
+      "file": "inputs.py",
+      "line_numbers": [27],
+      "vulnerability_type": "SQL Injection",
+      "severity": "Critical",
+      "description": "Building an SQL query by formatting user input into the SQL statement (\"SELECT ... WHERE id = '%s' % uid\") allows SQL injection.",
+      "fix_explanation": "Use parameterized SQL queries (placeholders) and validate the input type to prevent injection attacks. This removes direct string interpolation with user-provided values.",
+      "secure_code_snippet": "c.execute(\"SELECT id, name, balance FROM profiles WHERE id = ?\", (uid,))"
+    },
+    {
+      "id": 2,
+      "file": "inputs.py",
+      "line_numbers": [50,51,52],
+      "vulnerability_type": "Command Injection / Shell Execution",
+      "severity": "Critical",
+      "description": "Calling subprocess with shell=True and building a shell command with user-provided data (f\"zip {name}.zip {DB_FILE}\") allows command injection.",
+      "fix_explanation": "Avoid shell usage and string interpolation; use Python's zipfile module to create archives in-process, and sanitize filenames to avoid directory traversal.",
+      "secure_code_snippet": "with zipfile.ZipFile(zip_path, 'w', compression=zipfile.ZIP_DEFLATED) as zf:\n    zf.write(DB_FILE, arcname=os.path.basename(DB_FILE))"
+    },
+    {
+      "id": 3,
+      "file": "inputs.py",
+      "line_numbers": [11,12,13],
+      "vulnerability_type": "Hard-coded secrets",
+      "severity": "High",
+      "description": "PAYMENT_TOKEN, MAIL_SERVER_KEY, and INTERNAL_AUTH are stored directly in source code as plaintext strings, which risks exposure in version control.",
+      "fix_explanation": "Move secrets to environment variables or a secure secrets manager; the application should read secrets at runtime and fail safely if they are missing.",
+      "secure_code_snippet": "PAYMENT_TOKEN = os.environ.get(\"PAYMENT_TOKEN\")\nMAIL_SERVER_KEY = os.environ.get(\"MAIL_SERVER_KEY\")\nINTERNAL_AUTH = os.environ.get(\"INTERNAL_AUTH\")"
+    },
+    {
+      "id": 4,
+      "file": "inputs.py",
+      "line_numbers": [39,40,41],
+      "vulnerability_type": "SSRF / Token leakage / No timeout",
+      "severity": "High",
+      "description": "Calling requests.post() directly on user-provided URL (notify_url) without validation and including a master token in the JSON body; also no timeout is set.",
+      "fix_explanation": "Validate the URL (must be HTTPS and not a local/private address), do not send raw master tokens in payloads, sign notifications using HMAC and include a timeout for requests.",
+      "secure_code_snippet": "signature = hmac.new(PAYMENT_TOKEN.encode(), str(amount).encode(), hashlib.sha256).hexdigest()\nheaders = {'X-Signature': signature}\nresp = requests.post(url, json=notify_payload, headers=headers, timeout=5)"
+    },
+    {
+      "id": 5,
+      "file": "inputs.py",
+      "line_numbers": [44,45,46,47],
+      "vulnerability_type": "Arbitrary file read / Path traversal",
+      "severity": "High",
+      "description": "update_records() accepts a path from user input and directly opens it, allowing reading of arbitrary files or path traversal.",
+      "fix_explanation": "Restrict config file access to a known safe directory, resolve the absolute path, and ensure that the resolved path is within the allowed directory before opening the file.",
+      "secure_code_snippet": "candidate = os.path.abspath(os.path.join(ALLOWED_CONFIG_DIR, path))\nif not candidate.startswith(ALLOWED_CONFIG_DIR + os.sep) and candidate != ALLOWED_CONFIG_DIR:\n    raise ValueError(\"requested config is outside the permitted directory\")"
+    },
+    {
+      "id": 6,
+      "file": "inputs.py",
+      "line_numbers": [18,19,20,21],
+      "vulnerability_type": "Weak hash / predictable token generation",
+      "severity": "Medium",
+      "description": "Generating auth tokens by concatenating username with a secret and MD5 hashing is weak and potentially vulnerable to collisions and attacks.",
+      "fix_explanation": "Use HMAC-SHA256 (or a proper token/session system) to generate non-reversible tokens using a server-side secret.",
+      "secure_code_snippet": "digest = hmac.new(INTERNAL_AUTH.encode(), username.encode(), hashlib.sha256)\nreturn digest.hexdigest()"
+    },
+    {
+      "id": 7,
+      "file": "inputs.py",
+      "line_numbers": [37],
+      "vulnerability_type": "Sensitive logging",
+      "severity": "Low",
+      "description": "Printing transfer information (print(log)) can leak sensitive transaction data to stdout or logs.",
+      "fix_explanation": "Use structured logging (logging module) and avoid printing sensitive values in logs or mask them.",
+      "secure_code_snippet": "logger.info(\"transfer: target=%s amount=%s\", target, amount)"
+    },
+    {
+      "id": 8,
+      "file": "inputs.py",
+      "line_numbers": [88],
+      "vulnerability_type": "Debug server enabled",
+      "severity": "High",
+      "description": "Running a Flask app with debug=True enables the interactive debugger and gives access to internal state, which is unsafe in production.",
+      "fix_explanation": "Control debug with an environment variable or configuration flag and default to disabled in production.",
+      "secure_code_snippet": "debug_flag = os.environ.get(\"FLASK_DEBUG\", \"0\") == \"1\"\napp.run(debug=debug_flag)"
+    }
+  ]
+}

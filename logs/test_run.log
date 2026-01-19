@@ -1,0 +1,137 @@
+=== RUN at 2025-12-09T05:49:05.796411Z ===
+-- Testing inputs_backup.py --
+Start: 2025-12-09T05:49:05.868353Z
+{
+  "file": "inputs_backup.py",
+  "passed": false,
+  "issues": [
+    {
+      "id": "hardcoded_secrets",
+      "matches": [
+        [
+          152,
+          "PAYMENT_TOKEN = \"tok_production_998877\""
+        ],
+        [
+          192,
+          "MAIL_SERVER_KEY = \"mail_srv_key_ABCDEFG\""
+        ],
+        [
+          233,
+          "INTERNAL_AUTH = \"admin_internal_5566\""
+        ]
+      ]
+    },
+    {
+      "id": "weak_hash",
+      "matches": "hashlib.md5"
+    },
+    {
+      "id": "ssrf_requests",
+      "matches": [
+        "requests.post contains token or PAYMENT_TOKEN",
+        "requests.post without timeout"
+      ]
+    },
+    {
+      "id": "arbitrary_file_read",
+      "matches": "open(path) from user input"
+    },
+    {
+      "id": "command_injection",
+      "matches": "subprocess with shell or zip via shell"
+    },
+    {
+      "id": "debug_mode",
+      "matches": "app.run(debug=True)"
+    }
+  ]
+}
+
+End: 2025-12-09T05:49:06.007848Z
+Result: TEST FAILED
+-- Testing inputs.py --
+Start: 2025-12-09T05:49:06.008716Z
+{
+  "file": "inputs.py",
+  "passed": false,
+  "issues": [
+    {
+      "id": "arbitrary_file_read",
+      "matches": "open(path) from user input"
+    },
+    {
+      "id": "command_injection",
+      "matches": "subprocess with shell or zip via shell"
+    }
+  ]
+}
+
+End: 2025-12-09T05:49:06.128660Z
+Result: TEST FAILED
+=== FINAL STATUS: TEST FAILED at 2025-12-09T05:49:06.129214Z ===
+
+=== RUN at 2025-12-09T05:49:42.325321Z ===
+-- Testing inputs_backup.py --
+Start: 2025-12-09T05:49:42.374388Z
+{
+  "file": "inputs_backup.py",
+  "passed": false,
+  "issues": [
+    {
+      "id": "hardcoded_secrets",
+      "matches": [
+        [
+          152,
+          "PAYMENT_TOKEN = \"tok_production_998877\""
+        ],
+        [
+          192,
+          "MAIL_SERVER_KEY = \"mail_srv_key_ABCDEFG\""
+        ],
+        [
+          233,
+          "INTERNAL_AUTH = \"admin_internal_5566\""
+        ]
+      ]
+    },
+    {
+      "id": "weak_hash",
+      "matches": "hashlib.md5"
+    },
+    {
+      "id": "ssrf_requests",
+      "matches": [
+        "requests.post contains token or PAYMENT_TOKEN",
+        "requests.post without timeout"
+      ]
+    },
+    {
+      "id": "arbitrary_file_read",
+      "matches": "open(path) from user input"
+    },
+    {
+      "id": "command_injection",
+      "matches": "subprocess with shell or zip via shell"
+    },
+    {
+      "id": "debug_mode",
+      "matches": "app.run(debug=True)"
+    }
+  ]
+}
+
+End: 2025-12-09T05:49:42.470706Z
+Result: TEST FAILED
+-- Testing inputs.py --
+Start: 2025-12-09T05:49:42.471218Z
+{
+  "file": "inputs.py",
+  "passed": true,
+  "issues": []
+}
+
+End: 2025-12-09T05:49:42.581365Z
+Result: TEST PASSED
+=== FINAL STATUS: TEST FAILED at 2025-12-09T05:49:42.581821Z ===
+
